@@ -24,6 +24,13 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 app.use(middleware.tokenExtractor);
 
+app.get('/health', (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ status: 'error', db: 'disconnected' });
+  }
+  res.json({ status: 'ok', db: 'connected' });
+});
+
 app.get('/api/ping', (req, res) => {
   res.json({ message: 'pong', time: new Date().toISOString() });
 });
